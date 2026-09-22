@@ -12,7 +12,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       lowercase: true,
-      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     password: {
       type: String,
