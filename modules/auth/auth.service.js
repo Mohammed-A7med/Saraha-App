@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import CryptoJS from "crypto-js";
+import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
 
@@ -48,9 +49,33 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    // check user existence
+    const user = await User.findOne({ email })
+    if (!user)
+      return res.status(404).json({ success: false, message: "Invalid Email" });
+
+    // check password
+    const isPasswordMatch = bcrypt.compareSync(password, user.password);
+    if (!isPasswordMatch)
+      return res
+        .status(404)
+        .json({ success: false, message: "Invalid Password" });
+
+    // genrate token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        userName: user.userName,
+      },
+      process.env.JWT_SECRET,
+    );
+
     return res
       .status(200)
-      .json({ success: true, message: "User Logged In Successfully!" });
+      .json({ success: true, message: "User Logged In Successfully!", token });
   } catch (error) {
     return res.status(500).json({
       success: false,
