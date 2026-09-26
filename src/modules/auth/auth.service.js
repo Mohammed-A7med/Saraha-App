@@ -3,6 +3,8 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
+import sendEmails, { emailSubjects } from "../../utils/sendEmails.js";
+import { emailTemplate } from "../../utils/generateHTML.js";
 
 export const register = async (req, res) => {
   try {
@@ -26,6 +28,15 @@ export const register = async (req, res) => {
       phone,
       process.env.AES_SECRET_KEY,
     ).toString();
+
+    const token = jwt.sign({email} , process.env.JWT_SECRET)
+    const link = `http://localhost:3000/auth/acctivate_account/${token}`
+
+    const isEmailSend = await sendEmails({
+      to: email,
+      subject: emailSubjects.accountActivation,
+      html: emailTemplate(link),
+    });
 
     await User.create({
       email,
@@ -52,7 +63,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     // check user existence
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user)
       return res.status(404).json({ success: false, message: "Invalid Email" });
 
