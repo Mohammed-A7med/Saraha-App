@@ -29,8 +29,8 @@ export const register = async (req, res) => {
       process.env.AES_SECRET_KEY,
     ).toString();
 
-    const token = jwt.sign({email} , process.env.JWT_SECRET)
-    const link = `http://localhost:3000/auth/acctivate_account/${token}`
+    const token = jwt.sign({ email }, process.env.JWT_SECRET);
+    const link = `http://localhost:3000/auth/acctivate_account/${token}`;
 
     const isEmailSend = await sendEmails({
       to: email,
@@ -87,6 +87,33 @@ export const login = async (req, res) => {
     return res
       .status(200)
       .json({ success: true, message: "User Logged In Successfully!", token });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      stack: error.stack,
+      error,
+    });
+  }
+};
+
+export const activateAccount = async (req, res) => {
+  try {
+    // who are you
+    const { token } = req.params;
+    const { email } = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "Document not found!" });
+
+    // change user status to be is Acctivated true
+    user.isActive = true;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: "Try to login" });
   } catch (error) {
     return res.status(500).json({
       success: false,
