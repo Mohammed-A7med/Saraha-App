@@ -1,9 +1,11 @@
 import { Router } from "express";
+
 import * as userService from "./user.service.js";
+import isAuthenticated from "../../middleware/auth.middleware.js";
 
 const router = Router();
 
 // get user profile
-router.get("/profile", userService.profile);
+router.get("/profile", isAuthenticated , userService.profile);
 
 export default router;
