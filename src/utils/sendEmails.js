@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const subjects = {
+export const emailSubjects = {
   accountActivation: "Activate Your Saraha Account",
   resetPassword: "Reset Your Password",
 };
