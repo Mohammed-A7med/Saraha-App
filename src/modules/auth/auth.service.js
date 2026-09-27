@@ -30,7 +30,7 @@ export const register = async (req, res) => {
     ).toString();
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
-    const link = `http://localhost:3000/auth/acctivate_account/${token}`;
+    const link = `http://localhost:3000/auth/activate_account/${token}`;
 
     const isEmailSend = await sendEmails({
       to: email,
@@ -66,6 +66,15 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(404).json({ success: false, message: "Invalid Email" });
+
+    // check if account is acctive
+    if (!user.isActive)
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "You must acctive your account first",
+        });
 
     // check password
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
