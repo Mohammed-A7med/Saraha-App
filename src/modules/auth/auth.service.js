@@ -6,16 +6,14 @@ import User from "../../DB/models/user.model.js";
 import sendEmails, { emailSubjects } from "../../utils/sendEmails.js";
 import { emailTemplate } from "../../utils/generateHTML.js";
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   try {
     const { email, password, confirmPassword, userName, phone, gender } =
       req.body;
 
     // check if password and confirmPassword match
     if (password !== confirmPassword)
-      return res
-        .status(400)
-        .json({ success: false, message: "Passwords do not match!" });
+      return next(new Error("Passwords do not match!", { cause: 400 }));
 
     // hash pasword
     const hashedPassword = bcrypt.hashSync(
@@ -49,12 +47,7 @@ export const register = async (req, res) => {
       .status(201)
       .json({ success: true, message: "User Created Successfully!" });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-      stack: error.stack,
-      error,
-    });
+    return next(error);
   }
 };
 
@@ -69,12 +62,10 @@ export const login = async (req, res) => {
 
     // check if account is acctive
     if (!user.isActive)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "You must acctive your account first",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "You must acctive your account first",
+      });
 
     // check password
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
