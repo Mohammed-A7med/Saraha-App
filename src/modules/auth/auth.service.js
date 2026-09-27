@@ -81,21 +81,17 @@ export const login = asyncHandler(async (req, res, next) => {
     .json({ success: true, message: "User Logged In Successfully!", token });
 });
 
-export const activateAccount = async (req, res, next) => {
-  try {
-    // who are you
-    const { token } = req.params;
-    const { email } = jwt.verify(token, process.env.JWT_SECRET);
+export const activateAccount = asyncHandler(async (req, res, next) => {
+  // who are you
+  const { token } = req.params;
+  const { email } = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findOne({ email });
-    if (!user) return next(new Error("Document not found!", { cause: 400 }));
+  const user = await User.findOne({ email });
+  if (!user) return next(new Error("Document not found!", { cause: 400 }));
 
-    // change user status to be is Acctivated true
-    user.isActive = true;
-    await user.save();
+  // change user status to be is Acctivated true
+  user.isActive = true;
+  await user.save();
 
-    return res.status(200).json({ success: true, message: "Try to login" });
-  } catch (error) {
-    return next(error);
-  }
-};
+  return res.status(200).json({ success: true, message: "Try to login" });
+});
