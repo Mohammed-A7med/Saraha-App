@@ -51,28 +51,24 @@ export const register = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     // check user existence
     const user = await User.findOne({ email });
-    if (!user)
-      return res.status(404).json({ success: false, message: "Invalid Email" });
+    if (!user) return next(new Error("Invalid Email", { cause: 404 }));
 
     // check if account is acctive
     if (!user.isActive)
-      return res.status(400).json({
-        success: false,
-        message: "You must acctive your account first",
-      });
+      return next(
+        new Error("You must acctive your account first", { cause: 400 }),
+      );
 
     // check password
     const isPasswordMatch = bcrypt.compareSync(password, user.password);
     if (!isPasswordMatch)
-      return res
-        .status(404)
-        .json({ success: false, message: "Invalid Password" });
+      return next(new Error("Invalid Password", { cause: 404 }));
 
     // genrate token
     const token = jwt.sign(
@@ -88,12 +84,7 @@ export const login = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User Logged In Successfully!", token });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-      stack: error.stack,
-      error,
-    });
+    return next(error);
   }
 };
 
