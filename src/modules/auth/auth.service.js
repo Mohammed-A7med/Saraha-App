@@ -88,17 +88,14 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const activateAccount = async (req, res) => {
+export const activateAccount = async (req, res, next) => {
   try {
     // who are you
     const { token } = req.params;
     const { email } = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findOne({ email });
-    if (!user)
-      return res
-        .status(400)
-        .json({ success: false, message: "Document not found!" });
+    if (!user) return next(new Error("Document not found!", { cause: 400 }));
 
     // change user status to be is Acctivated true
     user.isActive = true;
@@ -106,11 +103,6 @@ export const activateAccount = async (req, res) => {
 
     return res.status(200).json({ success: true, message: "Try to login" });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-      stack: error.stack,
-      error,
-    });
+    return next(error);
   }
 };
