@@ -48,42 +48,38 @@ export const register = asyncHandler(async (req, res, next) => {
     .json({ success: true, message: "User Created Successfully!" });
 });
 
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+export const login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
 
-    // check user existence
-    const user = await User.findOne({ email });
-    if (!user) return next(new Error("Invalid Email", { cause: 404 }));
+  // check user existence
+  const user = await User.findOne({ email });
+  if (!user) return next(new Error("Invalid Email", { cause: 404 }));
 
-    // check if account is acctive
-    if (!user.isActive)
-      return next(
-        new Error("You must acctive your account first", { cause: 400 }),
-      );
-
-    // check password
-    const isPasswordMatch = bcrypt.compareSync(password, user.password);
-    if (!isPasswordMatch)
-      return next(new Error("Invalid Password", { cause: 404 }));
-
-    // genrate token
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        userName: user.userName,
-      },
-      process.env.JWT_SECRET,
+  // check if account is acctive
+  if (!user.isActive)
+    return next(
+      new Error("You must acctive your account first", { cause: 400 }),
     );
 
-    return res
-      .status(200)
-      .json({ success: true, message: "User Logged In Successfully!", token });
-  } catch (error) {
-    return next(error);
-  }
-};
+  // check password
+  const isPasswordMatch = bcrypt.compareSync(password, user.password);
+  if (!isPasswordMatch)
+    return next(new Error("Invalid Password", { cause: 404 }));
+
+  // genrate token
+  const token = jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      userName: user.userName,
+    },
+    process.env.JWT_SECRET,
+  );
+
+  return res
+    .status(200)
+    .json({ success: true, message: "User Logged In Successfully!", token });
+});
 
 export const activateAccount = async (req, res, next) => {
   try {
