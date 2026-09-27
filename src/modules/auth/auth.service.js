@@ -5,51 +5,48 @@ import jwt from "jsonwebtoken";
 import User from "../../DB/models/user.model.js";
 import sendEmails, { emailSubjects } from "../../utils/sendEmails.js";
 import { emailTemplate } from "../../utils/generateHTML.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 
-export const register = async (req, res, next) => {
-  try {
-    const { email, password, confirmPassword, userName, phone, gender } =
-      req.body;
+export const register = asyncHandler(async (req, res, next) => {
+  const { email, password, confirmPassword, userName, phone, gender } =
+    req.body;
 
-    // check if password and confirmPassword match
-    if (password !== confirmPassword)
-      return next(new Error("Passwords do not match!", { cause: 400 }));
+  // check if password and confirmPassword match
+  if (password !== confirmPassword)
+    return next(new Error("Passwords do not match!", { cause: 400 }));
 
-    // hash pasword
-    const hashedPassword = bcrypt.hashSync(
-      password,
-      Number(process.env.SALT_ROUNDS),
-    );
+  // hash pasword
+  const hashedPassword = bcrypt.hashSync(
+    password,
+    Number(process.env.SALT_ROUNDS),
+  );
 
-    // phone encryption
-    const encryptedPhone = CryptoJS.AES.encrypt(
-      phone,
-      process.env.AES_SECRET_KEY,
-    ).toString();
+  // phone encryption
+  const encryptedPhone = CryptoJS.AES.encrypt(
+    phone,
+    process.env.AES_SECRET_KEY,
+  ).toString();
 
-    const token = jwt.sign({ email }, process.env.JWT_SECRET);
-    const link = `http://localhost:3000/auth/activate_account/${token}`;
+  const token = jwt.sign({ email }, process.env.JWT_SECRET);
+  const link = `http://localhost:3000/auth/activate_account/${token}`;
 
-    const isEmailSend = await sendEmails({
-      to: email,
-      subject: emailSubjects.accountActivation,
-      html: emailTemplate(link),
-    });
+  const isEmailSend = await sendEmails({
+    to: email,
+    subject: emailSubjects.accountActivation,
+    html: emailTemplate(link),
+  });
 
-    await User.create({
-      email,
-      password: hashedPassword,
-      userName,
-      phone: encryptedPhone,
-      gender,
-    });
-    return res
-      .status(201)
-      .json({ success: true, message: "User Created Successfully!" });
-  } catch (error) {
-    return next(error);
-  }
-};
+  await User.create({
+    email,
+    password: hashedPassword,
+    userName,
+    phone: encryptedPhone,
+    gender,
+  });
+  return res
+    .status(201)
+    .json({ success: true, message: "User Created Successfully!" });
+});
 
 export const login = async (req, res, next) => {
   try {
