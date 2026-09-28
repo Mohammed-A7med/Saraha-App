@@ -1,3 +1,5 @@
+import globalErrorHandler from "../utils/errorHandling/globalErrorHandler.js";
+import notFoundHandler from "../utils/errorHandling/notFoundHandler.js";
 import connectDB from "./../DB/connection.js";
 import authRouter from "./auth/auth.controller.js";
 import userRouter from "./user/user.controller.js";
@@ -11,19 +13,9 @@ const bootstrap = async (app, express) => {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
 
-  app.all("/*splat", (req, res) => {
-    res.status(404).json({
-      success: false,
-      message: "API not found!",
-    });
-  });
+  app.all("/*splat", notFoundHandler);
 
-  app.use((error, req, res, next) => {
-    const status = error.cause || 500;
-    return res
-      .status(status)
-      .json({ success: false, message: error.message, stack: error.stack });
-  });
+  app.use(globalErrorHandler);
 };
 
 export default bootstrap;
