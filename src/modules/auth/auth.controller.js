@@ -1,9 +1,17 @@
 import { Router } from "express";
+
 import * as authService from "./auth.service.js";
+import * as authSchemas from "./auth.validation.js";
+import validation from "../../middleware/validation.middleware.js";
 
 const router = Router();
 
-router.post("/register", authService.register);
+// register 
+router.post(
+  "/register",
+  validation(authSchemas.register),
+  authService.register,
+);
 
 router.post("/login", authService.login);
 

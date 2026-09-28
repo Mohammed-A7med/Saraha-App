@@ -4,8 +4,8 @@ const validation = (schema) => {
     const { error } = schema.validate(data, { abortEarly: false });
 
     if (error) {
-      const message = error.details.map((obj) => obj.message).join(", ");
-      return next(new Error(message, { cause: 400 }));
+      const messageList = error.details.map((obj) => obj.message)
+      return next(new Error(messageList, { cause: 400 }));
     }
 
     return next();
