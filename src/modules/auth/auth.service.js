@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import { emailEmitter } from "../../utils/emails/email.event.js";
 
 export const register = asyncHandler(async (req, res, next) => {
