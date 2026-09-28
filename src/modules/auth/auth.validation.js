@@ -1,4 +1,5 @@
 import joi from "joi";
+
 import { genders } from "../../DB/models/user.model.js";
 
 export const register = joi
@@ -10,5 +11,12 @@ export const register = joi
     isActive: joi.boolean(),
     phone: joi.string().required(),
     gender: joi.string().valid(...Object.values(genders)),
+  })
+  .required();
+
+export const login = joi
+  .object({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
   })
   .required();

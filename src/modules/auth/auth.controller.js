@@ -6,14 +6,15 @@ import validation from "../../middleware/validation.middleware.js";
 
 const router = Router();
 
-// register 
+// register
 router.post(
   "/register",
   validation(authSchemas.register),
   authService.register,
 );
 
-router.post("/login", authService.login);
+// login
+router.post("/login", validation(authSchemas.login), authService.login);
 
 router.get("/activate_account/:token", authService.activateAccount);
 
