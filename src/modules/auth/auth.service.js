@@ -3,9 +3,8 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
-import sendEmails, { emailSubjects } from "../../utils/sendEmails.js";
-import { emailTemplate } from "../../utils/generateHTML.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { emailEmitter } from "../../utils/emails/email.event.js";
 
 export const register = asyncHandler(async (req, res, next) => {
   const { email, password, confirmPassword, userName, phone, gender } =
@@ -27,14 +26,8 @@ export const register = asyncHandler(async (req, res, next) => {
     process.env.AES_SECRET_KEY,
   ).toString();
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET);
-  const link = `http://localhost:3000/auth/activate_account/${token}`;
-
-  const isEmailSend = await sendEmails({
-    to: email,
-    subject: emailSubjects.accountActivation,
-    html: emailTemplate(link),
-  });
+  // send email
+  emailEmitter.emit("sendEmail", email);
 
   await User.create({
     email,
