@@ -1,8 +1,8 @@
 import EventEmitter from "events";
 import jwt from "jsonwebtoken";
 
-import sendEmails, { emailSubjects } from "../sendEmails.js";
-import { emailTemplate } from "../generateHTML.js";
+import { emailTemplate } from "./emailTemplate/generateHTML.js";
+import sendEmails, { emailSubjects } from "./sendEmails.js";
 
 export const emailEmitter = new EventEmitter();
 
