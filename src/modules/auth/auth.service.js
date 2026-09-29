@@ -1,41 +1,25 @@
 import bcrypt from "bcrypt";
-import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
-import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import { emailEmitter } from "../../utils/emails/email.event.js";
+import { encrtption } from "../../utils/encryption/encryption.js";
+import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
+import { generateHash } from "../../utils/hash/hash.js";
 
 export const register = asyncHandler(async (req, res, next) => {
-  const { email, password, confirmPassword, userName, phone, gender } =
-    req.body;
+  const { email, password, phone, ...data } = req.body;
 
-  // check if password and confirmPassword match
-  if (password !== confirmPassword)
-    return next(new Error("Passwords do not match!", { cause: 400 }));
-
-  // hash pasword
-  const hashedPassword = bcrypt.hashSync(
-    password,
-    Number(process.env.SALT_ROUNDS),
-  );
-
-  // phone encryption
-  const encryptedPhone = CryptoJS.AES.encrypt(
-    phone,
-    process.env.AES_SECRET_KEY,
-  ).toString();
+  await User.create({
+    ...data,
+    email,
+    password: generateHash({ plainText: password }),
+    phone: encrtption({ plainText: phone }),
+  });
 
   // send email
   emailEmitter.emit("sendEmail", email);
 
-  await User.create({
-    email,
-    password: hashedPassword,
-    userName,
-    phone: encryptedPhone,
-    gender,
-  });
   return res
     .status(201)
     .json({ success: true, message: "User Created Successfully!" });
