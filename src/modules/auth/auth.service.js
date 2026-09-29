@@ -5,7 +5,7 @@ import { emailEmitter } from "../../utils/emails/email.event.js";
 import { encrtption } from "../../utils/encryption/encryption.js";
 import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import { compareHash, generateHash } from "../../utils/hash/hash.js";
-import { generateToken } from "../../utils/token/token.js";
+import { generateToken, verifyToken } from "../../utils/token/token.js";
 
 export const register = asyncHandler(async (req, res, next) => {
   const { email, password, phone, ...data } = req.body;
@@ -63,7 +63,7 @@ export const login = asyncHandler(async (req, res, next) => {
 export const activateAccount = asyncHandler(async (req, res, next) => {
   // who are you
   const { token } = req.params;
-  const { email } = jwt.verify(token, process.env.JWT_SECRET);
+  const { email } = verifyToken({ token });
 
   const user = await User.findOne({ email });
   if (!user) return next(new Error("Document not found!", { cause: 400 }));
