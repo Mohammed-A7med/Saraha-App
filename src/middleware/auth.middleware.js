@@ -1,4 +1,5 @@
 import User from "../DB/models/user.model.js";
+import { asyncHandler } from "../utils/errorHandling/asyncHandler.js";
 import { verifyToken } from "../utils/token/token.js";
 
 const isAuthenticated = asyncHandler(async (req, res, next) => {
