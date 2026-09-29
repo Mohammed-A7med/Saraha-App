@@ -1,5 +1,3 @@
-import jwt from "jsonwebtoken";
-
 import User from "../../DB/models/user.model.js";
 import { emailEmitter } from "../../utils/emails/email.event.js";
 import { encrtption } from "../../utils/encryption/encryption.js";

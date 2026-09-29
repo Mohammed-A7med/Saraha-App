@@ -1,40 +1,25 @@
-import jwt from "jsonwebtoken";
-
 import User from "../DB/models/user.model.js";
+import { verifyToken } from "../utils/token/token.js";
 
-const isAuthenticated = async (req, res, next) => {
-  try {
-    // who are you
-    const { authorization } = req.headers;
+const isAuthenticated = asyncHandler(async (req, res, next) => {
+  // who are you
+  const { authorization } = req.headers;
 
-    // check if it's Bearer
-    if (!authorization || !authorization.startsWith("Bearer"))
-      return res
-        .status(403)
-        .json({ success: false, message: "Token Required!" });
+  // check if it's Bearer
+  if (!authorization || !authorization.startsWith("Bearer"))
+    return next(new Error("Token Required!", { cause: 403 }));
 
-    // extract token
-    const token = authorization.split(" ")[1];
+  // extract token
+  const token = authorization.split(" ")[1];
 
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+  const { id } = verifyToken({ token });
 
-    const user = await User.findById(id).select("-password").lean();
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+  const user = await User.findById(id).select("-password").lean();
+  if (!user) return next(new Error("User not found", { cause: 404 }));
 
-    //add user to req
-    req.user = user;
-    return next();
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-      stack: error.stack,
-      error,
-    });
-  }
-};
+  //add user to req
+  req.user = user;
+  return next();
+});
 
 export default isAuthenticated;
