@@ -1,11 +1,11 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import User from "../../DB/models/user.model.js";
 import { emailEmitter } from "../../utils/emails/email.event.js";
 import { encrtption } from "../../utils/encryption/encryption.js";
 import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
-import { generateHash } from "../../utils/hash/hash.js";
+import { compareHash, generateHash } from "../../utils/hash/hash.js";
+import { generateToken } from "../../utils/token/token.js";
 
 export const register = asyncHandler(async (req, res, next) => {
   const { email, password, phone, ...data } = req.body;
@@ -35,23 +35,25 @@ export const login = asyncHandler(async (req, res, next) => {
   // check if account is acctive
   if (!user.isActive)
     return next(
-      new Error("You must acctive your account first", { cause: 400 }),
+      new Error("Please activate your account first", { cause: 403 }),
     );
 
   // check password
-  const isPasswordMatch = bcrypt.compareSync(password, user.password);
+  const isPasswordMatch = compareHash({
+    plainText: password,
+    hashValue: user.password,
+  });
   if (!isPasswordMatch)
     return next(new Error("Invalid Password", { cause: 404 }));
 
   // genrate token
-  const token = jwt.sign(
-    {
+  const token = generateToken({
+    payload: {
       id: user._id,
       email: user.email,
       userName: user.userName,
     },
-    process.env.JWT_SECRET,
-  );
+  });
 
   return res
     .status(200)
