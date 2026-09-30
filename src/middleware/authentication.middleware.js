@@ -6,9 +6,12 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
   // who are you
   const { authorization } = req.headers;
 
+  // check token existance
+  if (!authorization) return next(new Error("Token Required!", { cause: 401 }));
+
   // check if it's Bearer
-  if (!authorization || !authorization.startsWith("Bearer"))
-    return next(new Error("Token Required!", { cause: 403 }));
+  if (!authorization.startsWith("Bearer"))
+    return next(new Error("Invalid Token!", { cause: 403 }));
 
   // extract token
   const token = authorization.split(" ")[1];

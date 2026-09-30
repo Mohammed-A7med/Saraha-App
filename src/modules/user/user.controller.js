@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import * as userService from "./user.service.js";
-import isAuthenticated from "../../middleware/auth.middleware.js";
+import isAuthenticated from "../../middleware/authentication.middleware.js";
 
 const router = Router();
 
