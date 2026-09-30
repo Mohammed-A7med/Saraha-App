@@ -1,22 +1,44 @@
 import { Router } from "express";
 
 import * as messageSevice from "./message.service.js";
+import * as messageSchema from "./message.validation.js";
+import validation from "../../middleware/validation.middleware.js";
 
 const router = Router();
 
 // send message
-router.post("/", messageSevice.sendMessage);
+router.post(
+  "/",
+  validation(messageSchema.sendMessage),
+  messageSevice.sendMessage,
+);
 
 // get single message
-router.get("/:id", messageSevice.getSingleMessage);
+router.get(
+  "/:id",
+  validation(messageSchema.getSingleMessage),
+  messageSevice.getSingleMessage,
+);
 
 // get all messages
-router.get("/", messageSevice.getAllMessages);
+router.get(
+  "/",
+  validation(messageSchema.getAllMessages),
+  messageSevice.getAllMessages,
+);
 
 // update message
-router.patch("/:id", messageSevice.updateMessage);
+router.patch(
+  "/:id",
+  validation(messageSchema.updateMessage),
+  messageSevice.updateMessage,
+);
 
 // delete message
-router.delete("/:id", messageSevice.deleteMessage);
+router.delete(
+  "/:id",
+  validation(messageSchema.deleteMessage),
+  messageSevice.deleteMessage,
+);
 
 export default router;
