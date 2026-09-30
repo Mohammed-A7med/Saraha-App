@@ -5,6 +5,11 @@ export const genders = {
   female: "female",
 };
 
+export const roles = {
+  user: "user",
+  admin: "admin",
+};
+
 const userSchema = new Schema(
   {
     email: {
@@ -12,7 +17,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       lowercase: true,
-     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
     password: {
       type: String,
@@ -30,6 +35,7 @@ const userSchema = new Schema(
       required: true,
     },
     gender: { type: String, enum: Object.values(genders) },
+    role: { type: String, enum: Object.values(roles), required: true },
   },
   {
     timestamps: true,
