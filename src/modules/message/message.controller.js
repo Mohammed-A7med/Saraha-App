@@ -1,20 +1,22 @@
 import { Router } from "express";
 
+import * as messageSevice from "./message.service.js";
+
 const router = Router();
 
 // send message
-router.post("/")
+router.post("/", messageSevice.sendMessage);
 
 // get single message
-router.get("/:id")
+router.get("/:id", messageSevice.getSingleMessage);
 
 // get all messages
-router.get("/")
+router.get("/", messageSevice.getAllMessages);
 
 // update message
-router.patch("/:id")
+router.patch("/:id", messageSevice.updateMessage);
 
 // delete message
-router.delete("/:id")
+router.delete("/:id", messageSevice.deleteMessage);
 
 export default router;
