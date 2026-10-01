@@ -35,7 +35,7 @@ const userSchema = new Schema(
       required: true,
     },
     gender: { type: String, enum: Object.values(genders) },
-    role: { type: String, enum: Object.values(roles), required: true },
+    role: { type: String, enum: Object.values(roles), default: roles.user },
   },
   {
     timestamps: true,
