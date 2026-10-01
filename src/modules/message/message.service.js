@@ -1,6 +1,7 @@
 import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import User from "../../DB/models/user.model.js";
 import Message from "../../DB/models/message.model.js";
+import { messageFlags } from "./message.validation.js";
 
 // Send Message
 export const sendMessage = asyncHandler(async (req, res, next) => {
@@ -33,9 +34,17 @@ export const getSingleMessage = asyncHandler(async (req, res, next) => {
 
 // Get All Messages
 export const getAllMessages = asyncHandler(async (req, res, next) => {
-  // flag inbox , outbox
-  // const { flag } = req.query;
-  return res.status(200).json({ success: true, results });
+  // flag inbox or outbox
+  const { flag } = req.query;
+
+  let messages;
+  if (flag == messageFlags.inbox) {
+    messages = await Message.find({ sender: req.user._id });
+  } else {
+    messages = await Message.find({ receiver: req.user._id });
+  }
+
+  return res.status(200).json({ success: true, result: { messages } });
 });
 
 // Update Message
