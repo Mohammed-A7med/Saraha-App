@@ -19,11 +19,22 @@ export const sendMessage = asyncHandler(async (req, res, next) => {
 
 // Get Single Message
 export const getSingleMessage = asyncHandler(async (req, res, next) => {
-  return res.status(200).json({ success: true, result });
+  const { user } = req;
+  const message = await Message.findById(req.params.id);
+
+  if (
+    message.receiver.toString() == user._id.toString() ||
+    message.sender.toString() == user._id.toString()
+  )
+    return res.status(200).json({ success: true, result: { message } });
+
+  return next(new Error("Unauthorized", { cause: 401 }));
 });
 
 // Get All Messages
 export const getAllMessages = asyncHandler(async (req, res, next) => {
+  // flag inbox , outbox
+  // const { flag } = req.query;
   return res.status(200).json({ success: true, results });
 });
 
