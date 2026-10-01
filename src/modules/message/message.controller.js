@@ -5,6 +5,7 @@ import * as messageSchema from "./message.validation.js";
 import validation from "../../middleware/validation.middleware.js";
 import isAuthenticated from "../../middleware/authentication.middleware.js";
 import isAuthorized from "../../middleware/authorization.middleware.js";
+import endpoints from "./message.endpoint.js";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ const router = Router();
 router.post(
   "/",
   isAuthenticated,
-  isAuthorized(),
+  isAuthorized(endpoints.sendMessage),
   validation(messageSchema.sendMessage),
   messageSevice.sendMessage,
 );
@@ -21,7 +22,7 @@ router.post(
 router.get(
   "/:id",
   isAuthenticated,
-  isAuthorized(),
+  isAuthorized(endpoints.getSingleMessage),
   validation(messageSchema.getSingleMessage),
   messageSevice.getSingleMessage,
 );
@@ -30,7 +31,7 @@ router.get(
 router.get(
   "/",
   isAuthenticated,
-  isAuthorized(),
+  isAuthorized(endpoints.getAllMessages),
   validation(messageSchema.getAllMessages),
   messageSevice.getAllMessages,
 );
@@ -39,7 +40,7 @@ router.get(
 router.patch(
   "/:id",
   isAuthenticated,
-  isAuthorized(),
+  isAuthorized(endpoints.updateMessage),
   validation(messageSchema.updateMessage),
   messageSevice.updateMessage,
 );
@@ -48,7 +49,7 @@ router.patch(
 router.delete(
   "/:id",
   isAuthenticated,
-  isAuthorized(),
+  isAuthorized(endpoints.deleteMessage),
   validation(messageSchema.deleteMessage),
   messageSevice.deleteMessage,
 );
