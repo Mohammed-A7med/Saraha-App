@@ -8,7 +8,9 @@ export const sendMessage = joi
   })
   .required();
 
-export const getSingleMessage = joi.object({}).required();
+export const getSingleMessage = joi.object({
+  id: joi.custom(isValidObjectId).required(),
+}).required();
 
 export const getAllMessages = joi.object({}).required();
 
