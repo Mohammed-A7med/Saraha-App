@@ -36,4 +36,9 @@ export const updateMessage = joi
   })
   .required();
 
-export const deleteMessage = joi.object({}).required();
+export const deleteMessage = joi
+  .object({
+    // params
+    id: joi.custom(isValidObjectId).required(),
+  })
+  .required();

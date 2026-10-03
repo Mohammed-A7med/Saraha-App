@@ -60,9 +60,9 @@ export const updateMessage = asyncHandler(async (req, res, next) => {
   );
 
   if (!message) {
-    return next(new Error("Message not found", { cause: 404 }));
+    return next(new Error("Message not found or unauthorized", { cause: 404 }));
   }
-  
+
   return res.status(200).json({
     success: true,
     message: "Message updated successfully",
@@ -71,6 +71,15 @@ export const updateMessage = asyncHandler(async (req, res, next) => {
 
 // Delete Message
 export const deleteMessage = asyncHandler(async (req, res, next) => {
+  const { user } = req;
+  const { id } = req.params;
+
+  const message = await Message.findOneAndDelete({ _id: id, sender: user._id });
+
+  if (!message) {
+    return next(new Error("Message not found or unauthorized", { cause: 404 }));
+  }
+
   return res
     .status(200)
     .json({ success: true, message: "Message Deleted successfuly" });
