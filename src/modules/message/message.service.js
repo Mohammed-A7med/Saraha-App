@@ -49,9 +49,24 @@ export const getAllMessages = asyncHandler(async (req, res, next) => {
 
 // Update Message
 export const updateMessage = asyncHandler(async (req, res, next) => {
-  return res
-    .status(200)
-    .json({ success: true, message: "Message Updated successfuly" });
+  const { user } = req;
+  const { id } = req.params;
+  const { content } = req.body;
+
+  const message = await Message.findOneAndUpdate(
+    { _id: id, sender: user._id },
+    { content },
+    { new: true, runValidators: true },
+  );
+
+  if (!message) {
+    return next(new Error("Message not found", { cause: 404 }));
+  }
+  
+  return res.status(200).json({
+    success: true,
+    message: "Message updated successfully",
+  });
 });
 
 // Delete Message
