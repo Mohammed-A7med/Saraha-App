@@ -27,6 +27,13 @@ export const getAllMessages = joi
   })
   .required();
 
-export const updateMessage = joi.object({}).required();
+export const updateMessage = joi
+  .object({
+    // body
+    content: joi.string().required(),
+    // params
+    id: joi.custom(isValidObjectId).required(),
+  })
+  .required();
 
 export const deleteMessage = joi.object({}).required();
