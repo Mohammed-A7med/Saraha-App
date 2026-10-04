@@ -1,4 +1,12 @@
 import { Types } from "mongoose";
+import joi from "joi";
+
+export const generalFields = {
+  email: joi.string().email(),
+  password: joi.string(),
+  confirmPassword: joi.string(),
+  userName: joi.string().min(5).max(15),
+};
 
 const validation = (schema) => {
   return (req, res, next) => {

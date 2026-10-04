@@ -1,8 +1,7 @@
-import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
-import User from "../../DB/models/user.model.js";
 import Message from "../../DB/models/message.model.js";
+import User from "../../DB/models/user.model.js";
+import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import { messageFlags } from "./message.validation.js";
-import { decrtption } from "../../utils/encryption/encryption.js";
 
 // Send Message
 export const sendMessage = asyncHandler(async (req, res, next) => {

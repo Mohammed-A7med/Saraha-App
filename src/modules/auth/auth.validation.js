@@ -1,13 +1,14 @@
 import joi from "joi";
 
 import { genders } from "../../DB/models/user.model.js";
+import { generalFields } from "../../middleware/validation.middleware.js";
 
 export const register = joi
   .object({
-    email: joi.string().email().required(),
-    password: joi.string().required(),
-    confirmPassword: joi.string().valid(joi.ref("password")),
-    userName: joi.string().min(5).max(15).required(),
+    email: generalFields.email.required(),
+    password: generalFields.password.required(),
+    confirmPassword: generalFields.confirmPassword.valid(joi.ref("password")).required(),
+    userName: generalFields.userName.required(),
     isActive: joi.boolean(),
     phone: joi.string().required(),
     gender: joi.string().valid(...Object.values(genders)),
@@ -16,7 +17,7 @@ export const register = joi
 
 export const login = joi
   .object({
-    email: joi.string().email().required(),
-    password: joi.string().required(),
+    email: generalFields.email.required(),
+    password: generalFields.password.required(),
   })
   .required();
