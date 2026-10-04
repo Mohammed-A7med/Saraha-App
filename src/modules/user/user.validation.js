@@ -8,4 +8,14 @@ export const updateProfile = joi
     phone: generalFields.phone,
     email: generalFields.email,
   })
-  .required()
+  .required();
+
+export const updatePassword = joi
+  .object({
+    oldPassword: generalFields.password,
+    newPassword: generalFields.password.not(joi.ref("oldPassword")),
+    confirmPassword: generalFields.confirmPassword.valid(
+      joi.ref("newPassword"),
+    ),
+  })
+  .required();

@@ -18,8 +18,12 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
 
   const { id } = verifyToken({ token });
 
+  // check user
   const user = await User.findById(id).select("-password").lean();
   if (!user) return next(new Error("User not found", { cause: 404 }));
+
+  // check for isLoggedIn
+  if (!user.isLoggedIn) return next(new Error("Login First", { cause: 404 }));
 
   //add user to req
   req.user = user;

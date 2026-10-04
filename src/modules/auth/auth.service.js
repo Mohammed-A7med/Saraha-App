@@ -44,6 +44,9 @@ export const login = asyncHandler(async (req, res, next) => {
   if (!isPasswordMatch)
     return next(new Error("Invalid Password", { cause: 404 }));
 
+  user.isLoggedIn = true;
+  await user.save();
+
   // genrate token
   const token = generateToken({
     payload: {

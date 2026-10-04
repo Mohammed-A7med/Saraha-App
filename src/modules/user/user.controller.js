@@ -26,4 +26,13 @@ router.patch(
   userService.updateProfile,
 );
 
+// update password
+router.patch(
+  "/password",
+  isAuthenticated,
+  isAuthorized(endpoints.updatePassword),
+  validation(userSchema.updatePassword),
+  userService.updatePassword,
+);
+
 export default router;

@@ -36,6 +36,7 @@ const userSchema = new Schema(
     },
     gender: { type: String, enum: Object.values(genders) },
     role: { type: String, enum: Object.values(roles), default: roles.user },
+    isLoggedIn: { type: Boolean, default: false },
   },
   {
     timestamps: true,
