@@ -2,6 +2,7 @@ import { asyncHandler } from "../../utils/errorHandling/asyncHandler.js";
 import User from "../../DB/models/user.model.js";
 import Message from "../../DB/models/message.model.js";
 import { messageFlags } from "./message.validation.js";
+import { decrtption } from "../../utils/encryption/encryption.js";
 
 // Send Message
 export const sendMessage = asyncHandler(async (req, res, next) => {
@@ -21,11 +22,14 @@ export const sendMessage = asyncHandler(async (req, res, next) => {
 // Get Single Message
 export const getSingleMessage = asyncHandler(async (req, res, next) => {
   const { user } = req;
-  const message = await Message.findById(req.params.id);
+  const message = await Message.findById(req.params.id).populate([
+    { path: "sender", select: "userName email -_id" },
+    { path: "receiver", select: "userName email -_id" },
+  ]);
 
   if (
-    message.receiver.toString() == user._id.toString() ||
-    message.sender.toString() == user._id.toString()
+    message.receiver.email == user.email ||
+    message.sender.email == user.email
   )
     return res.status(200).json({ success: true, result: { message } });
 
