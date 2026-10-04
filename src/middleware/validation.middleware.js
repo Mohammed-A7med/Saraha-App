@@ -6,6 +6,7 @@ export const generalFields = {
   password: joi.string(),
   confirmPassword: joi.string(),
   userName: joi.string().min(5).max(15),
+  phone: joi.string()
 };
 
 const validation = (schema) => {

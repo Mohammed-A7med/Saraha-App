@@ -10,7 +10,7 @@ export const register = joi
     confirmPassword: generalFields.confirmPassword.valid(joi.ref("password")).required(),
     userName: generalFields.userName.required(),
     isActive: joi.boolean(),
-    phone: joi.string().required(),
+    phone: generalFields.phone.required(),
     gender: joi.string().valid(...Object.values(genders)),
   })
   .required();
