@@ -37,11 +37,28 @@ export const updatePassword = asyncHandler(async (req, res, next) => {
     return next(new Error("Invalid old password", { cause: 400 }));
 
   user.password = generateHash({ plainText: newPassword });
-  user.isLoggedIn = false
+  user.isLoggedIn = false;
   await user.save();
 
   return res.status(200).json({
     success: true,
     message: "Password updated successfully!",
+  });
+});
+
+export const deactivateAccount = asyncHandler(async (req, res, next) => {
+  const { password } = req.body;
+  const user = await User.findById(req.user._id);
+  
+  if (!compareHash({ plainText: password, hashValue: user.password }))
+    return next(new Error("Invalid password", { cause: 400 }));
+
+  user.freezed = true;
+  user.isLoggedIn = false;
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Account deactivated successfully!",
   });
 });

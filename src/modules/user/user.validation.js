@@ -19,3 +19,9 @@ export const updatePassword = joi
     ),
   })
   .required();
+
+export const deactivateAccount = joi
+  .object({
+    password: generalFields.password.required(),
+  })
+  .required();

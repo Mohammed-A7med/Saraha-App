@@ -45,6 +45,7 @@ export const login = asyncHandler(async (req, res, next) => {
     return next(new Error("Invalid Password", { cause: 404 }));
 
   user.isLoggedIn = true;
+  user.freezed = false;
   await user.save();
 
   // genrate token

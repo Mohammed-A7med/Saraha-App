@@ -35,4 +35,13 @@ router.patch(
   userService.updatePassword,
 );
 
+// deactivate account 
+router.delete(
+  "/account",
+  isAuthenticated,
+  isAuthorized(endpoints.deactivateAccount),
+  validation(userSchema.deactivateAccount),
+  userService.deactivateAccount,
+);
+
 export default router;
