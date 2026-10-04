@@ -12,6 +12,17 @@ export const profile = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, user: { ...user, phone } });
 });
 
+export const shareProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({
+    _id: req.params.id,
+    freezed: false,
+  }).select("userName email");
+
+  return user
+    ? res.status(200).json({ success: true, user: { user } })
+    : next(new Error("Invalid Account", { cause: 404 }));
+});
+
 export const updateProfile = asyncHandler(async (req, res, next) => {
   if (req.body.phone) {
     req.body.phone = encrtption({ plainText: req.body.phone });
@@ -49,7 +60,7 @@ export const updatePassword = asyncHandler(async (req, res, next) => {
 export const deactivateAccount = asyncHandler(async (req, res, next) => {
   const { password } = req.body;
   const user = await User.findById(req.user._id);
-  
+
   if (!compareHash({ plainText: password, hashValue: user.password }))
     return next(new Error("Invalid password", { cause: 400 }));
 
