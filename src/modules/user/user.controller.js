@@ -1,9 +1,11 @@
 import { Router } from "express";
 
-import isAuthenticated from "../../middleware/authentication.middleware.js";
-import isAuthorized from "../../middleware/authorization.middleware.js";
-import * as userService from "./user.service.js";
 import endpoints from "./user.endpoint.js";
+import * as userService from "./user.service.js";
+import * as userSchema from "./user.validation.js";
+import validation from "../../middleware/validation.middleware.js";
+import isAuthorized from "../../middleware/authorization.middleware.js";
+import isAuthenticated from "../../middleware/authentication.middleware.js";
 
 const router = Router();
 
@@ -13,6 +15,15 @@ router.get(
   isAuthenticated,
   isAuthorized(endpoints.profile),
   userService.profile,
+);
+
+// update user profile
+router.patch(
+  "/profile",
+  isAuthenticated,
+  isAuthorized(endpoints.updateProfile),
+  validation(userSchema.updateProfile),
+  userService.updateProfile,
 );
 
 export default router;
