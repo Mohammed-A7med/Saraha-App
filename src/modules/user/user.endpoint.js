@@ -4,6 +4,7 @@ const endpoints = {
   profile: [roles.user],
   updateProfile: [roles.user],
   updatePassword: [roles.user],
+  deactivateAccount: [roles.user],
 };
 
 export default endpoints;
