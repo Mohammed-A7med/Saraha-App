@@ -17,6 +17,13 @@ router.get(
   userService.profile,
 );
 
+// share profile
+router.get(
+  "/profile/:id",
+  validation(userSchema.shareProfile),
+  userService.shareProfile,
+);
+
 // update user profile
 router.patch(
   "/profile",
@@ -35,7 +42,7 @@ router.patch(
   userService.updatePassword,
 );
 
-// deactivate account 
+// deactivate account
 router.delete(
   "/account",
   isAuthenticated,

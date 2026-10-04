@@ -1,6 +1,9 @@
 import joi from "joi";
 
-import { generalFields } from "../../middleware/validation.middleware.js";
+import {
+  generalFields,
+  isValidObjectId,
+} from "../../middleware/validation.middleware.js";
 
 export const updateProfile = joi
   .object({
@@ -23,5 +26,12 @@ export const updatePassword = joi
 export const deactivateAccount = joi
   .object({
     password: generalFields.password.required(),
+  })
+  .required();
+
+export const shareProfile = joi
+  .object({
+    // params
+    id: joi.custom(isValidObjectId).required(),
   })
   .required();
