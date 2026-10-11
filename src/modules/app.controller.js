@@ -1,3 +1,5 @@
+import cors from "cors";
+
 import globalErrorHandler from "../utils/errorHandling/globalErrorHandler.js";
 import notFoundHandler from "../utils/errorHandling/notFoundHandler.js";
 import connectDB from "./../DB/connection.js";
@@ -6,11 +8,17 @@ import userRouter from "./user/user.controller.js";
 import messageRouter from "./message/message.controller.js";
 
 const bootstrap = async (app, express) => {
+  app.use(cors());
   // connect to the database
   await connectDB();
 
   app.use(express.json());
 
+  app.get("/", (req, res, next) => {
+    return res
+      .status(200)
+      .json({ success: true, message: "welcome in Saraha App" });
+  });
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/message", messageRouter);
