@@ -44,7 +44,7 @@ export const emailTemplate = (link) => `<!DOCTYPE html>
                 </tr>
                 <tr>
                 <td>
-                <h2 style="margin:10px 0px 30px 0px;border-radius:4px;padding:10px 20px;border: 0;color:#fff;background-color:#630E2B; ">${link}</h2>
+                <a href=${link} style="margin:10px 0px 30px 0px;border-radius:4px;padding:10px 20px;border: 0;color:#fff;background-color:#630E2B; ">Verify Account</a>
                 </td>
                 </tr>
                 </table>
